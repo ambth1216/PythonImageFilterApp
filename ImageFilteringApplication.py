@@ -30,7 +30,6 @@ class ImageFilterApp:
         self.scale_factor = 1.0
         self.file_path = None
         self.text_can = None
-        self.text_to_add = []
 
         # Crop variables
         self.crop_mode = False
@@ -96,6 +95,10 @@ class ImageFilterApp:
         #Edge detection button 
         self.edge_button = Button(self.buttons_frame, text='Edge', state=DISABLED, command=self.detect_edge)
         self.edge_button.pack(side=LEFT, padx=4)
+
+        # Image rotate button
+        self.rotate_button = Button(self.buttons_frame, text="Rotate", state=DISABLED, command=self.rot_img)
+        self.rotate_button.pack(side=LEFT, padx=5)
 
         #Reset button
         self.reset_button = Button(self.buttons_frame, text='Reset', state=DISABLED, command=self.reset_image_to_original)
@@ -238,7 +241,7 @@ class ImageFilterApp:
                     self.status_label.config(text=f"Error saving image: {str(e)}")
 
     def numpy_opreations(self):
-        self.arr_image = np.asarray(self.original_image)
+        self.arr_image = np.asarray(self.working_image)
     
     def toggle_crop_mode(self):
         if self.working_image:
@@ -420,7 +423,16 @@ class ImageFilterApp:
         self.working_image = Image.fromarray(edge)
 
         self.update_canvas() 
-        self.status_label.config(text="Edge detected")               
+        self.status_label.config(text="Edge detected")
+
+    def rot_img(self):
+        if self.working_image:
+            self.numpy_opreations()
+            self.arr_image = np.rot90(self.arr_image)
+
+            self.working_image = Image.fromarray(self.arr_image)
+            self.update_canvas()
+            self.status_label.config(text='Image rotated') 
 
 # resize the image of the canvas when the window is configured i.e when window is maximised or its size is changed
 # the below function recalculate the image scale factor 
