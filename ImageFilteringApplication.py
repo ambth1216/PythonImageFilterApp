@@ -1,8 +1,12 @@
 '''
+Team: Pixel Masters
+Members: Indranil, Anuj mishra, Sahil Anand, Rohan, Himanshu
 Required labraries:
-tkinker(pip instal tkinter)
-PIL(pip instal pillow)
-OpenCV(pip instal opencv- python)
+pillow==10.4.0 
+opencv-python==4.11.0.86
+numpy==2.1.1
+tkinter (standard library)
+os (standard library)
 '''
 from tkinter import *
 from tkinter import filedialog, simpledialog, colorchooser
@@ -24,6 +28,7 @@ class ImageFilterApp:
         self.gaussian_blur = None
         self.grayscale_arr = None
         self.edge_arr = None
+        self.flip_arr = None
         self.original_image = None # Pillow image object
         self.working_image = None  # Image on which filters are being applied
         self.display_image = None  # Scaled up image
@@ -100,6 +105,10 @@ class ImageFilterApp:
         self.rotate_button = Button(self.buttons_frame, text="Rotate", state=DISABLED, command=self.rot_img)
         self.rotate_button.pack(side=LEFT, padx=5)
 
+        # Image flip button
+        self.flip_button = Button(self.buttons_frame, text='Flip', state=DISABLED, command=self.flip_image)
+        self.flip_button.pack(side=LEFT, padx=5)
+
         #Reset button
         self.reset_button = Button(self.buttons_frame, text='Reset', state=DISABLED, command=self.reset_image_to_original)
         self.reset_button.pack(side=LEFT, padx=4)
@@ -132,6 +141,8 @@ class ImageFilterApp:
                 self.blur_button.configure(state=NORMAL)
                 self.gray_scale_button.config(state=NORMAL)
                 self.edge_button.config(state=NORMAL)
+                self.rotate_button.config(state=NORMAL)
+                self.flip_button.config(state=NORMAL)
                 self.reset_button.config(state=NORMAL)
             except Exception as e:
                 self.status_label.config(text=f'Error {str(e)}')
@@ -432,7 +443,16 @@ class ImageFilterApp:
 
             self.working_image = Image.fromarray(self.arr_image)
             self.update_canvas()
-            self.status_label.config(text='Image rotated') 
+            self.status_label.config(text='Image rotated')
+
+    def flip_image(self):
+        if self.working_image:
+            self.numpy_opreations()
+            self.flip_arr = self.arr_image
+            self.flip_arr = cv2.flip(self.flip_arr, 1) # 1 is the flip tag means flipping image horizontly
+            self.working_image = Image.fromarray(self.flip_arr)
+            self.update_canvas()
+            self.status_label.config(text='Image flipped')               
 
 # resize the image of the canvas when the window is configured i.e when window is maximised or its size is changed
 # the below function recalculate the image scale factor 
@@ -448,4 +468,3 @@ if __name__ == '__main__':
     root.bind('<Configure>', window_resize)
 
     root.mainloop()
-
